@@ -17,6 +17,24 @@ body {
 
 }
 
+#sign-select {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    min-width: 250px;
+    min-height: 50px;
+    margin: 0 0 20px 0;
+}
+
+.sign-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    margin: 0 20px;
+    border: 2px solid black;
+}
+
 #game-con {
     display: flex;
     flex-direction: column;
@@ -36,8 +54,6 @@ body {
 .grid-piece {
     flex: 1;
     border: 2px solid black;
-
-
 }
 
 .grid-piece:hover {
