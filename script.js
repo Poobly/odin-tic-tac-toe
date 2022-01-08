@@ -12,8 +12,11 @@ const displayController = (() => {
         const winModalCon = document.getElementById("game-end-modal-con");
         const winModal = document.getElementById("game-end-modal");
         winModalCon.style.display = "flex"
+        
         if (winner === "draw") winModal.textContent = `It's a tie.`
         else winModal.textContent = `${winner.getSign} has won.`
+
+        // checks for mousedown to exit modal.
         winModalCon.addEventListener("mousedown", (e) => {
             resetDisplay()
             winModalCon.style.display = "none"
@@ -24,7 +27,7 @@ const displayController = (() => {
         gameBoardBoxes.forEach((ele) => ele.textContent = null)
     }
 
-    return {display, displayWinModal};
+    return {display, displayWinModal, resetDisplay};
 })();
 
 const Players = (name, sign) => {
@@ -68,17 +71,26 @@ const turnHandler = (() => {
         }
     }
     const endGame = () => {
-        console.log(getTurn())
         displayController.displayWinModal(winner)
+
         gameBoard.gameboard.forEach((element, index, array) => array[index] = "");
         turn = null;
         winner = null;
     }
-    return {getTurn, nextTurn, checkWin, endGame};
+    
+    const restartGame = () => {
+        gameBoard.gameboard.forEach((element, index, array) => array[index] = "");
+        turn = null;
+        winner = null;
+        displayController.resetDisplay();
+    }
+
+    return {getTurn, nextTurn, checkWin, endGame, restartGame};
 })();
 
 const playGame = (() => {
-    const divs = document.querySelectorAll(".grid-piece"); 
+    const divs = document.querySelectorAll(".grid-piece");
+    const restartButton = document.getElementById("restart-button");
     const p1 = Players("p1", "X");
     const p2 = Players("p2", "O");
 
@@ -105,11 +117,11 @@ const playGame = (() => {
                         turnHandler.endGame()
                     }
                     else {
-                        console.log("orange");
                         turnHandler.nextTurn(p1, p2);
                     }
                 }
             });
         });
+        restartButton.addEventListener("click", turnHandler.restartGame);
     })();
 })();
