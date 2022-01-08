@@ -12,7 +12,8 @@ const displayController = (() => {
         const winModalCon = document.getElementById("game-end-modal-con");
         const winModal = document.getElementById("game-end-modal");
         winModalCon.style.display = "flex"
-        winModal.textContent = `${winner.getSign} has won.`
+        if (winner === "draw") winModal.textContent = `It's a tie.`
+        else winModal.textContent = `${winner.getSign} has won.`
         winModalCon.addEventListener("mousedown", (e) => {
             resetDisplay()
             winModalCon.style.display = "none"
@@ -38,6 +39,7 @@ const turnHandler = (() => {
     const getTurn = () => turn;
     const nextTurn = (p1, p2) => (turn !== p2) ? turn = p2 : turn = p1;
     const checkWin = (gameboard, p1, p2) => {
+        console.log(typeof(gameboard))
         if (gameboard[0] === "X" && gameboard[4] === "X" && gameboard[8] === "X"
             || gameboard[0] === "X" && gameboard[1] === "X" && gameboard[2] === "X"
             || gameboard[3] === "X" && gameboard[4] === "X" && gameboard[5] === "X"
@@ -60,7 +62,7 @@ const turnHandler = (() => {
                     winner = p2;
                     return true;
         }
-        else if (gameBoard.every((value) => value !== "")) {
+        else if (gameboard.every((value) => value !== "")) {
             winner = "draw";
             return true;    
         }
