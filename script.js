@@ -9,10 +9,21 @@ const displayController = (() => {
         e.target.textContent = sign;
     };
     const displayWinModal = (winner) => {
-        inputForm.style.display = "flex"
-        
+        const winModalCon = document.getElementById("game-end-modal-con");
+        const winModal = document.getElementById("game-end-modal");
+        winModalCon.style.display = "flex"
+        winModal.textContent = `${winner.getSign} has won.`
+        winModalCon.addEventListener("mousedown", (e) => {
+            resetDisplay()
+            winModalCon.style.display = "none"
+        });
     }
-    return {display};
+    const resetDisplay = () => {
+        const gameBoardBoxes = document.querySelectorAll("#game-con > div > div");
+        gameBoardBoxes.forEach((ele) => ele.textContent = null)
+    }
+
+    return {display, displayWinModal};
 })();
 
 const Players = (name, sign) => {
@@ -23,6 +34,7 @@ const Players = (name, sign) => {
 
 const turnHandler = (() => {
     let turn;
+    let winner;
     const getTurn = () => turn;
     const nextTurn = (p1, p2) => (turn !== p2) ? turn = p2 : turn = p1;
     const checkWin = (gameboard, p1, p2) => {
@@ -32,8 +44,10 @@ const turnHandler = (() => {
             || gameboard[6] === "X" && gameboard[7] === "X" && gameboard[8] === "X"
             || gameboard[0] === "X" && gameboard[3] === "X" && gameboard[6] === "X"
             || gameboard[1] === "X" && gameboard[4] === "X" && gameboard[7] === "X"
-            || gameboard[2] === "X" && gameboard[5] === "X" && gameboard[8] === "X") {
-                endGame(p1);
+            || gameboard[2] === "X" && gameboard[5] === "X" && gameboard[8] === "X"
+            || gameboard[2] === "X" && gameboard[4] === "X" && gameboard[6] === "X") {
+                winner = p1;
+                return true;
         }
         else if (gameboard[0] === "O" && gameboard[4] === "O" && gameboard[8] === "O"
                 || gameboard[0] === "O" && gameboard[1] === "O" && gameboard[2] === "O"
@@ -41,14 +55,24 @@ const turnHandler = (() => {
                 || gameboard[6] === "O" && gameboard[7] === "O" && gameboard[8] === "O"
                 || gameboard[0] === "O" && gameboard[3] === "O" && gameboard[6] === "O"
                 || gameboard[1] === "O" && gameboard[4] === "O" && gameboard[7] === "O"
-                || gameboard[2] === "O" && gameboard[5] === "O" && gameboard[8] === "O") {
-                endGame(p2);
+                || gameboard[2] === "O" && gameboard[5] === "O" && gameboard[8] === "O"
+                || gameboard[2] === "O" && gameboard[4] === "O" && gameboard[6] === "O") {
+                    winner = p2;
+                    return true;
+        }
+        else if (gameBoard.every((value) => value !== "")) {
+            winner = "draw";
+            return true;    
         }
     }
-    const endGame = (winner) => {
+    const endGame = () => {
+        console.log(getTurn())
         displayController.displayWinModal(winner)
+        gameBoard.gameboard.forEach((element, index, array) => array[index] = "");
+        turn = null;
+        winner = null;
     }
-    return {getTurn, nextTurn, checkWin};
+    return {getTurn, nextTurn, checkWin, endGame};
 })();
 
 const playGame = (() => {
@@ -59,31 +83,29 @@ const playGame = (() => {
     (function createListeners() {
         divs.forEach((div) => {
             div.addEventListener("click", (e) => {
-                console.log(turnHandler.getTurn());
                 if (gameBoard.gameboard[e.target.dataset.key] === "") {
+                    console.log(turnHandler.getTurn())
                     switch (turnHandler.getTurn()) {
                         case p1:
-                            console.log("p1");
                             gameBoard.gameboard[e.target.dataset.key] = p1.getSign;
                             displayController.display(e, p1.getSign);
                             break;
                         case p2:
-                            console.log("p2");
                             gameBoard.gameboard[e.target.dataset.key] = p2.getSign;
                             displayController.display(e, p2.getSign);
                             break;
                         default:
-                            console.log("p1");
                             gameBoard.gameboard[e.target.dataset.key] = p1.getSign;
                             displayController.display(e, p1.getSign);
                             break;
                     }
-                    console.log(gameBoard.gameboard)
                     if (turnHandler.checkWin(gameBoard.gameboard, p1, p2)) {
-                        console.log("apple");
-                        turnHandler.endGame
+                        turnHandler.endGame()
                     }
-                    turnHandler.nextTurn(p1, p2);
+                    else {
+                        console.log("orange");
+                        turnHandler.nextTurn(p1, p2);
+                    }
                 }
             });
         });
