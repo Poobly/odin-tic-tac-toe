@@ -8,6 +8,10 @@ const displayController = (() => {
     const display = (e, sign) => {
         e.target.textContent = sign;
     };
+    const displayWinModal = (winner) => {
+        inputForm.style.display = "flex"
+        
+    }
     return {display};
 })();
 
@@ -21,24 +25,28 @@ const turnHandler = (() => {
     let turn;
     const getTurn = () => turn;
     const nextTurn = (p1, p2) => (turn !== p2) ? turn = p2 : turn = p1;
-    const checkWin = (gameboard) => {
-        // for (let i = 0; i <= gameboard.length; i++) {
-            if (gameboard[0], gameboard[4], gameboard[8] === "X"
-                || gameboard[0], gameboard[1], gameboard[2] === "X"
-                || gameboard[3], gameboard[4], gameboard[5] === "X"
-                || gameboard[6], gameboard[7], gameboard[8] === "X"
-            )
-            {
-                console.log("x wins");
-            }
-            else if (gameboard[0], gameboard[4], gameboard[8] === "O"
-                    || gameboard[0], gameboard[1], gameboard[2] === "O"
-                    || gameboard[3], gameboard[4], gameboard[5] === "O"
-                    || gameboard[6], gameboard[7], gameboard[8] === "O"
-            )
-            {
-                console.log("o wins")
-            }
+    const checkWin = (gameboard, p1, p2) => {
+        if (gameboard[0] === "X" && gameboard[4] === "X" && gameboard[8] === "X"
+            || gameboard[0] === "X" && gameboard[1] === "X" && gameboard[2] === "X"
+            || gameboard[3] === "X" && gameboard[4] === "X" && gameboard[5] === "X"
+            || gameboard[6] === "X" && gameboard[7] === "X" && gameboard[8] === "X"
+            || gameboard[0] === "X" && gameboard[3] === "X" && gameboard[6] === "X"
+            || gameboard[1] === "X" && gameboard[4] === "X" && gameboard[7] === "X"
+            || gameboard[2] === "X" && gameboard[5] === "X" && gameboard[8] === "X") {
+                endGame(p1);
+        }
+        else if (gameboard[0] === "O" && gameboard[4] === "O" && gameboard[8] === "O"
+                || gameboard[0] === "O" && gameboard[1] === "O" && gameboard[2] === "O"
+                || gameboard[3] === "O" && gameboard[4] === "O" && gameboard[5] === "O"
+                || gameboard[6] === "O" && gameboard[7] === "O" && gameboard[8] === "O"
+                || gameboard[0] === "O" && gameboard[3] === "O" && gameboard[6] === "O"
+                || gameboard[1] === "O" && gameboard[4] === "O" && gameboard[7] === "O"
+                || gameboard[2] === "O" && gameboard[5] === "O" && gameboard[8] === "O") {
+                endGame(p2);
+        }
+    }
+    const endGame = (winner) => {
+        displayController.displayWinModal(winner)
     }
     return {getTurn, nextTurn, checkWin};
 })();
@@ -71,7 +79,10 @@ const playGame = (() => {
                             break;
                     }
                     console.log(gameBoard.gameboard)
-                    turnHandler.checkWin(gameBoard.gameboard)
+                    if (turnHandler.checkWin(gameBoard.gameboard, p1, p2)) {
+                        console.log("apple");
+                        turnHandler.endGame
+                    }
                     turnHandler.nextTurn(p1, p2);
                 }
             });
