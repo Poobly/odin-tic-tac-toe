@@ -5,8 +5,9 @@ const gameBoard = (() => {
 
 const displayController = (() => {
     const gameboard = gameBoard.gameboard;
-    const display = (e, sign) => {
-        e.target.textContent = sign;
+    const display = (e, sign, index) => {
+        gameBoard.gameboard[index] = sign;
+        e.textContent = sign;
     };
     const displayWinModal = (winner) => {
         const winModalCon = document.getElementById("game-end-modal-con");
@@ -42,7 +43,6 @@ const turnHandler = (() => {
     const getTurn = () => turn;
     const nextTurn = (p1, p2) => (turn !== p2) ? turn = p2 : turn = p1;
     const checkWin = (gameboard, p1, p2) => {
-        console.log(typeof(gameboard))
         if (gameboard[0] === "X" && gameboard[4] === "X" && gameboard[8] === "X"
             || gameboard[0] === "X" && gameboard[1] === "X" && gameboard[2] === "X"
             || gameboard[3] === "X" && gameboard[4] === "X" && gameboard[5] === "X"
@@ -88,29 +88,57 @@ const turnHandler = (() => {
     return {getTurn, nextTurn, checkWin, endGame, restartGame};
 })();
 
+const cpu = (() => {
+    const play = (sign) => {
+        const gameGrid = document.querySelectorAll(".grid-piece");
+        let cpuMove = Math.floor(Math.random() * 9);
+
+        console.log(cpuMove);
+        if (gameGrid[cpuMove].textContent === "") {
+            displayController.display(gameGrid[cpuMove], sign, cpuMove)
+        }
+        else {
+            play(sign);
+        }
+    }
+    return {play};
+})();
+
 const playGame = (() => {
-    const divs = document.querySelectorAll(".grid-piece");
+    const gameButtons = document.querySelectorAll(".grid-piece");
     const restartButton = document.getElementById("restart-button");
+    const signSelection = document.querySelectorAll(".sign-button");
     const p1 = Players("p1", "X");
     const p2 = Players("p2", "O");
-
     (function createListeners() {
-        divs.forEach((div) => {
-            div.addEventListener("click", (e) => {
+        signSelection.forEach((button) => {
+            button.addEventListener("click", (e) => {
+                let pSign = e.target.textContent;
+                let cpuSign;
+                if (e.target.className === "sign-button" && pSign === "X") {
+                    cpuSign = "O";
+                    console.log(cpuSign);
+                    cpu.play(cpuSign);
+                }
+                else if (e.target.className === "sign-button" && pSign === "O") {
+                    cpuSign = "X";
+                    console.log(cpuSign);
+                    cpu.play(cpuSign);
+                }
+            });
+        });
+        gameButtons.forEach((button) => {
+            button.addEventListener("click", (e) => {
                 if (gameBoard.gameboard[e.target.dataset.key] === "") {
-                    console.log(turnHandler.getTurn())
                     switch (turnHandler.getTurn()) {
                         case p1:
-                            gameBoard.gameboard[e.target.dataset.key] = p1.getSign;
-                            displayController.display(e, p1.getSign);
+                            displayController.display(e.target, p1.getSign, e.target.dataset.key);
                             break;
                         case p2:
-                            gameBoard.gameboard[e.target.dataset.key] = p2.getSign;
-                            displayController.display(e, p2.getSign);
+                            displayController.display(e.target, p2.getSign, e.target.dataset.key);
                             break;
                         default:
-                            gameBoard.gameboard[e.target.dataset.key] = p1.getSign;
-                            displayController.display(e, p1.getSign);
+                            displayController.display(e.target, p1.getSign, e.target.dataset.key);
                             break;
                     }
                     if (turnHandler.checkWin(gameBoard.gameboard, p1, p2)) {
