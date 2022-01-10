@@ -17,6 +17,10 @@ body {
 
 }
 
+#select-menu, #game-con, #game-end-modal {
+    user-select: none;
+}
+
 #select-menu {
     display: flex;
     justify-content: space-between;
@@ -79,6 +83,7 @@ body {
     top: 0;
     z-index: 1;
     background: rgba(0, 0, 0, 0.5);
+    user-select: none;
 }
 
 #game-end-modal {
@@ -90,5 +95,5 @@ body {
     height: 250px;
     font-size: 100px;
     color: rgb(255, 255, 255);
-    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 50, 0.5);
 }
